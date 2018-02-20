@@ -1,0 +1,27 @@
+
+pipeline {
+    agent any
+    environment { VAR = ’value’ }
+    stages {
+        stage(’Unit Tests’) {
+            steps {
+                sh ’sbt clean coverage test coverageReport’
+            }
+        }
+        stage(’Build’) {
+            steps {
+                sh ’sbt clean compile package assembly’
+            }
+        }
+        stage(’Integration Tests’) {
+            steps {
+                sh ’cd IntegrationEnv/ && sbt clean test’
+            }
+        }
+    }
+    post {
+        success { echo "Success" }
+        failure { echo "Fail" }
+    }
+}
+
